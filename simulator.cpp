@@ -1,6 +1,7 @@
 #include "simulator.h"
 #include <GL/glut.h>
 #include <GL/gl.h>
+//#include <QGLFunctions>
 
 #include <QDebug>
 #include <QMouseEvent>
@@ -39,10 +40,14 @@ void Simulator::initializeGL()
 
 void Simulator::resizeGL(int w, int h)
 {
+//    initializeGLFunctions();
+//    geometries.init();
+
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(45, (float) w/h, 0.01, 500.0);
+//    projection.
     glMatrixMode(GL_MODELVIEW);
 //    glLoadIdentity();
 //    gluLookAt(0,0,7,0,0,0,0,1,0);
