@@ -26,3 +26,4 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 LIBS += -lglut -lGLU
+#INCLUDEPATH += ./externals/glm-0.9.5.4

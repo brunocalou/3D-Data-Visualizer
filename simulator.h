@@ -24,6 +24,8 @@ private:
     bool first_time_rotating;
     int mouse_x, mouse_y;
     bool w_is_pressed,a_is_pressed,s_is_pressed,d_is_pressed;
+    void perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+    void drawText(double x, double y, double z, QString txt);
 
 
 signals:

@@ -1,11 +1,13 @@
 #include "simulator.h"
-#include <GL/glut.h>
-#include <GL/gl.h>
+//#include <GL/glut.h>
+//#include <GL/gl.h>
+//#include <glm/glm.hpp>
 //#include <QGLFunctions>
 
 #include <QDebug>
 #include <QMouseEvent>
-
+#include <QGLWidget>
+#include <cmath>
 #include "datafile.h"
 
 Simulator::Simulator(QWidget *parent) :
@@ -17,10 +19,21 @@ Simulator::Simulator(QWidget *parent) :
 
 
     DataFile dataFile;
-    dataFile.loadData("gps.txt","g", points);
-    qDebug() << sizeof(points)/sizeof(points.at(0));
-    qDebug() << sizeof(points);
-    qDebug() << points.size();
+    dataFile.setFile("gps.txt");
+    dataFile.removeFile();
+//    std::vector<float> a;
+//    for(int i = -3.141*100*2; i < 3.141*100*2; i++)
+//    {
+//        float j = i/100.0;
+//        a.push_back(cos(pow(j,2))*j);
+//        a.push_back(j);
+//        a.push_back(sin(pow(j,2))*j);
+//        dataFile.writeData("g",a);
+//        a.clear();
+//    }
+
+//    dataFile.reloadFile();
+    dataFile.loadData("g", points);
 
     this->grabKeyboard();
 //    parent->installEventFilter(this);
@@ -46,14 +59,14 @@ void Simulator::resizeGL(int w, int h)
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45, (float) w/h, 0.01, 500.0);
+    //gluPerspective(45, (float) w/h, 0.1, 100.0);
+    perspectiveGL(45,(float) w/h, 0.1, 100.0);
 //    projection.
     glMatrixMode(GL_MODELVIEW);
 //    glLoadIdentity();
 //    gluLookAt(0,0,7,0,0,0,0,1,0);
     camera.view_width = w;
     camera.view_height = h;
-    qDebug() << w << h;
 }
 
 void Simulator::paintGL()
@@ -64,17 +77,46 @@ void Simulator::paintGL()
 
     glColor3f(1,1,1);
     glLoadIdentity();
+//    drawText(0,0,0,"MATRIX");
     camera.rotateCamera();
     camera.updateCamera();
     glPushMatrix();
         glRotatef(-90,1,0,0);
-        drawGrid(100,1);
+        drawGrid(10,1);
         glColor3f(0,1,0);
         drawPoints();
     glPopMatrix();
 
+
+}
+void Simulator::perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar )
+{
+    // Replaces gluPerspective. Sets the frustum to perspective mode.
+    // fovY     - Field of vision in degrees in the y direction
+    // aspect   - Aspect ratio of the viewport
+    // zNear    - The near clipping distance
+    // zFar     - The far clipping distance
+    const GLdouble pi = 3.1415926535897932384626433832795;
+    GLdouble fW, fH;
+    fH = tan( fovY / 360 * pi ) * zNear;
+    fW = fH * aspect;
+    glFrustum( -fW, fW, -fH, fH, zNear, zFar );
 }
 
+void Simulator::drawText(double x, double y, double z, QString txt)
+{
+//    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+    glPushMatrix();
+    glRotatef(10,1,0,0);
+    glTranslatef(0,0,5);
+
+    qglColor(Qt::white);
+    renderText(x, y, z, txt, QFont("Arial", 12, QFont::Bold, false) );
+    glPopMatrix();
+    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_LIGHTING);
+}
 void Simulator::drawGrid(float size, float step)
 {
     glPushMatrix();
@@ -93,10 +135,17 @@ void Simulator::drawGrid(float size, float step)
 
 void Simulator::drawPoints(float scale)
 {
+    if(points.empty())
+    {
+        return ;
+    }
+    glPushMatrix();
+    glScalef(scale, scale, scale);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3,GL_FLOAT,0,&points.at(0));
     glDrawArrays(GL_LINE_STRIP,0,points.size()/3);
     glDisableClientState(GL_VERTEX_ARRAY);
+    glPopMatrix();
 }
 
 void Simulator::mousePressEvent(QMouseEvent *event)

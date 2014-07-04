@@ -5,23 +5,31 @@
 
 DataFile::DataFile()
 {
+    lines = NULL;
 }
 
-void DataFile::loadData(QString file_name, QString key, std::vector<std::vector<float> > &data_vector)
+DataFile::~DataFile()
 {
-    QFile file;
-    file.setFileName(file_name);
-    file.open(QIODevice::ReadOnly);
-    QString data;
-    data = (QString)file.readAll();
-    file.close();
+    cleanMemory();
+}
 
-    QStringList values = data.split(key,QString::SkipEmptyParts);
-    QStringListIterator values_iterator(values);
+void DataFile::loadData(QString key, std::vector<std::vector<float> > &data_vector)
+{
+    QStringListIterator values_iterator(*lines);
 
     while(values_iterator.hasNext())
     {
+        if(!values_iterator.peekNext().contains(key))
+        {
+            values_iterator.next();
+            continue;
+        }
         QStringList points = values_iterator.next().split(" ", QString::SkipEmptyParts);
+        if(!points.isEmpty())
+        {
+            //Removes the key
+            points.removeFirst();
+        }
         QStringListIterator points_iterator(points);
 
         std::vector <float> pts;
@@ -31,30 +39,25 @@ void DataFile::loadData(QString file_name, QString key, std::vector<std::vector<
         }
         data_vector.push_back(pts);
     }
-//    for(std::vector<std::vector<float> >::iterator it = data_vector.begin(); it != data_vector.end(); it++)
-//    {
-//        for(std::vector<float>::iterator val = (*it).begin(); val != (*it).end(); val++)
-//        {
-//            qDebug() << (*val);
-//        }
-//    }
 }
 
-void DataFile::loadData(QString file_name, QString key, std::vector<float> &data_vector)
+void DataFile::loadData(QString key, std::vector<float> &data_vector)
 {
-    QFile file;
-    file.setFileName(file_name);
-    file.open(QIODevice::ReadOnly);
-    QString data;
-    data = (QString)file.readAll();
-    file.close();
-
-    QStringList values = data.split(key,QString::SkipEmptyParts);
-    QStringListIterator values_iterator(values);
+    QStringListIterator values_iterator(*lines);
 
     while(values_iterator.hasNext())
     {
+        if(!values_iterator.peekNext().contains(key))
+        {
+            values_iterator.next();
+            continue;
+        }
         QStringList points = values_iterator.next().split(" ", QString::SkipEmptyParts);
+        if(!points.isEmpty())
+        {
+            //Removes the key
+            points.removeFirst();
+        }
         QStringListIterator points_iterator(points);
 
         while(points_iterator.hasNext())
@@ -63,4 +66,50 @@ void DataFile::loadData(QString file_name, QString key, std::vector<float> &data
         }
 
     }
+}
+
+void DataFile::writeData(QString key, std::vector<float> &data_vector)
+{
+    QString line;
+    line.append(key);
+    for(unsigned int i = 0; i < data_vector.size(); i++)
+    {
+        line.append(" ");
+        line.append(QString::number(data_vector.at(i)));
+    }
+    line.append("\n");
+    file.open(QIODevice::Append);
+    file.write(line.toLatin1());
+    file.close();
+}
+
+void DataFile::setFile(QString file_name)
+{
+    cleanMemory();
+
+    file.setFileName(file_name);
+    file.open(QIODevice::ReadOnly);
+    QString data;
+    data = (QString)file.readAll();
+    file.close();
+
+    lines = new QStringList(data.split("\n",QString::SkipEmptyParts));
+}
+
+void DataFile::cleanMemory()
+{
+    if(lines != NULL)
+    {
+        delete lines;
+    }
+}
+
+void DataFile::reloadFile()
+{
+    setFile(file.fileName());
+}
+
+bool DataFile::removeFile()
+{
+    return file.remove();
 }
