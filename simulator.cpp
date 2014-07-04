@@ -21,6 +21,7 @@ Simulator::Simulator(QWidget *parent) :
     DataFile dataFile;
     dataFile.setFile("gps.txt");
     dataFile.removeFile();
+//    Uncomment to fill up file
 //    std::vector<float> a;
 //    for(int i = -3.141*100*2; i < 3.141*100*2; i++)
 //    {
