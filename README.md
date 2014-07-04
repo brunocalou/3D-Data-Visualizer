@@ -9,8 +9,4 @@ The main purpose of this program is to get gps data from somewhere and plot the 
 Dependencies
 ==================
 
-The freeglut library is current needed for this project, but I'll change the code in order to work with opengl provided by Qt
-
-For now, to run it on linux, install the freeglut3-dev library
-
-sudo apt-get install freeglut3-dev
+Qt 5.x
