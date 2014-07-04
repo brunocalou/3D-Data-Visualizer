@@ -78,7 +78,7 @@ void DataFile::writeData(QString key, std::vector<float> &data_vector)
         line.append(QString::number(data_vector.at(i)));
     }
     line.append("\n");
-    file.open(QIODevice::Append);
+    file.open(QIODevice::WriteOnly | QIODevice::Append);
     file.write(line.toLatin1());
     file.close();
 }

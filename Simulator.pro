@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Simulator
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     simulator.cpp \
@@ -25,5 +24,5 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-LIBS += -lglut -lGLU
+#LIBS += -lglut -lGLU
 #INCLUDEPATH += ./externals/glm-0.9.5.4

@@ -20,8 +20,10 @@ Simulator::Simulator(QWidget *parent) :
 
     DataFile dataFile;
     dataFile.setFile("gps.txt");
-    dataFile.removeFile();
-//    Uncomment to fill up file
+
+    //Uncomment the following lines to fill up file
+
+//    dataFile.removeFile();
 //    std::vector<float> a;
 //    for(int i = -3.141*100*2; i < 3.141*100*2; i++)
 //    {
@@ -34,6 +36,8 @@ Simulator::Simulator(QWidget *parent) :
 //    }
 
 //    dataFile.reloadFile();
+
+    //Load Data
     dataFile.loadData("g", points);
 
     this->grabKeyboard();
