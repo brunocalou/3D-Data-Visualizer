@@ -38,7 +38,8 @@ Simulator::Simulator(QWidget *parent) :
 //    dataFile.reloadFile();
 
     //Load Data
-    dataFile.loadData("g", points);
+//    dataFile.loadData("g", points);
+    dataFile.loadData("55,6,1", points);
 
     this->grabKeyboard();
 //    parent->installEventFilter(this);
