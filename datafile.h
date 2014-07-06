@@ -11,7 +11,7 @@ public:
     DataFile();
     ~DataFile();
     //Read Operations
-    void setFile(QString file_name="");
+    void setUpFile(QString file_name="");
     void loadData(QString key, std::vector <std::vector <float> > &data_vector);
     void loadData(QString key, std::vector <float> &data_vector);
 
@@ -34,5 +34,4 @@ private:
     QString getNewFileName();
 
 };
-
 #endif // DATAFILE_H

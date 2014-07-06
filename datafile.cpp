@@ -92,13 +92,14 @@ void DataFile::writeData(QString key, std::vector<float> &data_vector)
         line.append(QString::number(data_vector.at(i)));
     }
     line.append("\n");
-    file.open(QIODevice::WriteOnly | QIODevice::Append);
+    file.open(QIODevice::Append);
     file.write(line.toLatin1());
     file.close();
     QDir::setCurrent(original_path);
+    qDebug() << "saved";
 }
 
-void DataFile::setFile(QString file_name)
+void DataFile::setUpFile(QString file_name)
 {
     cleanMemory();
 
@@ -106,19 +107,22 @@ void DataFile::setFile(QString file_name)
 
     if(file_name == ""){file_name = getNewFileName();}
     file.setFileName(file_name);
-    file.open(QIODevice::ReadOnly);
-    QString data;
-    data = (QString)file.readAll();
-    file.close();
 
-    lines = new QStringList(data.split("\n",QString::SkipEmptyParts));
+    if(file.exists())//Prevents the error "QIODevice::seek: Cannot call seek on a sequential device"
+    {
+        file.open(QIODevice::ReadOnly);
+        QString data;
+        data = (QString)file.readAll();
+        file.close();
 
+        lines = new QStringList(data.split("\n",QString::SkipEmptyParts));
+    }
     QDir::setCurrent(original_path);
 }
 
 void DataFile::generateFileName()
 {
-    setFile(getNewFileName());
+    setUpFile(getNewFileName());
 }
 
 void DataFile::setDirectoryPath(QString directory_path)
@@ -150,7 +154,7 @@ void DataFile::cleanMemory()
 void DataFile::reloadFile()
 {
     QDir::setCurrent(directory_path);
-    setFile(file.fileName());
+    setUpFile(file.fileName());
     QDir::setCurrent(original_path);
 }
 

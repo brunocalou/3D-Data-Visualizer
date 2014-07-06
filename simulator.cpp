@@ -19,7 +19,9 @@ Simulator::Simulator(QWidget *parent) :
 
 
     DataFile dataFile;
-    dataFile.setFile("gps.txt");
+    dataFile.setDirectoryPath(".");
+    dataFile.setUpFile("gps.txt");
+//    dataFile.setUpFile("Log_Sat_05_07_2014_22:56:24.txt");
 
     //Uncomment the following lines to fill up file
 
@@ -38,8 +40,8 @@ Simulator::Simulator(QWidget *parent) :
 //    dataFile.reloadFile();
 
     //Load Data
-//    dataFile.loadData("g", points);
-    dataFile.loadData("55,6,1", points);
+    dataFile.loadData("g", points);
+//    dataFile.loadData("55,6,1", points);
 
     this->grabKeyboard();
 //    parent->installEventFilter(this);
@@ -145,10 +147,12 @@ void Simulator::drawPoints(float scale)
     {
         return ;
     }
+//    int stride = 6*sizeof(float);//6 numbers per vector
+    int stride = 0;//Compacted vector
     glPushMatrix();
     glScalef(scale, scale, scale);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3,GL_FLOAT,0,&points.at(0));
+    glVertexPointer(3,GL_FLOAT,stride,&points.at(0));
     glDrawArrays(GL_LINE_STRIP,0,points.size()/3);
     glDisableClientState(GL_VERTEX_ARRAY);
     glPopMatrix();
